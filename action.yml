@@ -6,7 +6,7 @@ author: '@sksat'
 inputs:
   github_token:
     description: 'GitHub token for reviewdog'
-    default: '${{ secrets.PAT }}'
+    default: '${{ github.token }}'
   workdir:
     description: 'working directory'
     default: '.'
@@ -39,7 +39,7 @@ runs:
       uses: actions/checkout@v3
       with:
         repository: AI4OPT/reviewdog-action-setup
-        token: ${{ secrets.PAT }}
+        token: ${{ github_token }}
         path: reviewdog-action-setup
 
     - name: install reviewdog
