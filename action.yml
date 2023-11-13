@@ -6,7 +6,7 @@ author: '@sksat'
 inputs:
   github_token:
     description: 'GitHub token for reviewdog'
-    default: '${{ github.token }}'
+    default: '${{ secrets.PAT }}'
   workdir:
     description: 'working directory'
     default: '.'
@@ -35,20 +35,27 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Custom action reviewdog-action-setup
+      uses: actions/checkout@v3
+      with:
+        repository: AI4OPT/reviewdog-action-setup
+        token: ${{ secrets.PAT }}
+        path: reviewdog-action-setup
+
     - name: install reviewdog
-      uses: reviewdog/action-setup@v1.0.6
+      uses: ./reviewdog-action-setup
 
     - name: install clang-tidy
       #if: runner.os == 'Linux'
       shell: bash
-      run: sudo apt-get install -y clang-tidy-11
+      run: sudo apt-get install -y clang-tidy
 
     - name: Run clang-tidy
       continue-on-error: true
       shell: bash
       working-directory: ${{ inputs.workdir }}
       run: |
-        run-clang-tidy-11 \
+        run-clang-tidy \
           | sed "s|$(pwd)/||g" > clang_tidy_raw.log
 
     - name: Remove clang-tidy duplicate error
