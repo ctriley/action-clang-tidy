@@ -39,7 +39,7 @@ runs:
       uses: actions/checkout@v3
       with:
         repository: AI4OPT/reviewdog-action-setup
-        token: ${{ github_token }}
+        token: ${{ inputs.github_token }}
         path: reviewdog-action-setup
 
     - name: install reviewdog
