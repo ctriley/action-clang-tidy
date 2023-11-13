@@ -55,13 +55,13 @@ runs:
       shell: bash
       working-directory: ${{ inputs.workdir }}
       run: |
-        run-clang-tidy \
+          run-clang-tidy -p=./build -config-file=".clang-tidy" --format-style="file" \
           | sed "s|$(pwd)/||g" > clang_tidy_raw.log
 
     - name: Remove clang-tidy duplicate error
       shell: bash
       run: |
-        python ${{ github.action_path }}/remove_duplicate_error.py ${{ inputs.workdir }}/clang_tidy_raw.log "clang-tidy" \
+        python3 ${{ github.action_path }}/remove_duplicate_error.py ${{ inputs.workdir }}/clang_tidy_raw.log "clang-tidy" \
           | tee ${{ inputs.workdir }}/clang_tidy.log
 
     - name: reviewdog
