@@ -35,26 +35,33 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Custom action reviewdog-action-setup
+      uses: actions/checkout@v3
+      with:
+        repository: AI4OPT/reviewdog-action-setup
+        token: ${{ inputs.github_token }}
+        path: reviewdog-action-setup
+
     - name: install reviewdog
-      uses: reviewdog/action-setup@v1.2.0
+      uses: ./reviewdog-action-setup
 
     - name: install clang-tidy
       #if: runner.os == 'Linux'
       shell: bash
-      run: sudo apt-get install -y clang-tidy-11
+      run: sudo apt-get install -y clang-tidy
 
     - name: Run clang-tidy
       continue-on-error: true
       shell: bash
       working-directory: ${{ inputs.workdir }}
       run: |
-        run-clang-tidy-11 \
+          clang-tidy -p=./build --format-style="file"  $(find . -name "*build*" -prune -o \( -name '*.cc' -o -name '*.h' \) -print) \
           | sed "s|$(pwd)/||g" > clang_tidy_raw.log
 
     - name: Remove clang-tidy duplicate error
       shell: bash
       run: |
-        python ${{ github.action_path }}/remove_duplicate_error.py ${{ inputs.workdir }}/clang_tidy_raw.log "clang-tidy-11" \
+        python3 ${{ github.action_path }}/remove_duplicate_error.py ${{ inputs.workdir }}/clang_tidy_raw.log "clang-tidy-14" \
           | tee ${{ inputs.workdir }}/clang_tidy.log
 
     - name: reviewdog

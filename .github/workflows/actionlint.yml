@@ -10,10 +10,16 @@ jobs:
     name: actionlint with reviewdog
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
-      - name: actionlint
-        uses: reviewdog/action-actionlint@v1.41.0
+      - name: Custom action reviewdog
+        uses: actions/checkout@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          repository: AI4OPT/reviewdog-action-actionlint
+          token: ${{ secrets.PAT }}
+          path: reviewdog-action-actionlint
+      - name: actionlint
+        uses: AI4OPT/reviewdog-action-actionlint
+        with:
+          github_token: ${{ secrets.PAT }}
           reporter: github-pr-review
