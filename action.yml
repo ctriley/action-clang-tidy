@@ -55,7 +55,7 @@ runs:
       shell: bash
       working-directory: ${{ inputs.workdir }}
       run: |
-          clang-tidy -p=./build --format-style="file"  $(find . -name "*build*" -prune -o \( -name '*.cc' -o -name '*.h' \) -print) \
+          clang-tidy -extra-arg="--std=c++17" -p=./build --format-style="file"  $(find . -name "*build*" -prune -o \( -name '*.cc' -o -name '*.h' \) -print) \
           | sed "s|$(pwd)/||g" > clang_tidy_raw.log
 
     - name: Remove clang-tidy duplicate error
